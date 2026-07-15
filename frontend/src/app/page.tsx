@@ -30,6 +30,7 @@ import {
   Sun,
   Moon,
   Info,
+  Sparkles,
 } from "lucide-react";
 import { runSimulation } from "@/lib/api";
 import type {
@@ -128,9 +129,57 @@ function buildChartData(response: SimulationResponse): ChartDataPoint[] {
   return buckets as unknown as ChartDataPoint[];
 }
 
+function generateExecutiveSummary(response: SimulationResponse) {
+  const { summary } = response;
+  const sortedByAllowed = [...ALGORITHM_NAMES].sort((a, b) => summary[b].allowed - summary[a].allowed);
+  
+  const mostLenient = sortedByAllowed[0];
+  const strictest = sortedByAllowed[2];
+  
+  if (summary[mostLenient].allowed === summary[strictest].allowed) {
+    return "All three algorithms performed identically for this traffic pattern, allowing and blocking the exact same number of requests.";
+  }
+  
+  const diff = summary[mostLenient].allowed - summary[strictest].allowed;
+  
+  return `During this traffic simulation, the ${ALGORITHM_META[mostLenient].label} was the most lenient (allowing ${summary[mostLenient].allowed} requests), while the ${ALGORITHM_META[strictest].label} was the strictest (allowing only ${summary[strictest].allowed}). The difference of ${diff} requests visually highlights the architectural tradeoffs between burst-tolerance and strict window boundaries.`;
+}
+
 // ---------------------------------------------------------------------------
 // Components
 // ---------------------------------------------------------------------------
+
+function NumberInput({ label, value, onChange, min, max, step = 1 }: any) {
+  return (
+    <div>
+      <div className="flex justify-between items-end mb-1.5">
+        <label className="text-[10px] uppercase tracking-wider text-muted font-semibold">{label}</label>
+        <span className="text-[10px] text-muted/50 font-mono">Max {max}</span>
+      </div>
+      <div className="relative group">
+        <input 
+          type="number" min={min} max={max} step={step}
+          value={value === 0 ? "" : value}
+          onChange={(e) => {
+            if (e.target.value === "") {
+              onChange(0);
+              return;
+            }
+            let val = Number(e.target.value);
+            if (val > max) val = max;
+            onChange(val);
+          }}
+          onBlur={(e) => {
+            let val = Number(e.target.value);
+            if (val < min) onChange(min);
+          }}
+          className="w-full rounded-xl border border-card-border bg-background/50 px-4 py-2.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none hover:bg-background group-hover:border-card-border/80"
+        />
+      </div>
+    </div>
+  );
+}
+
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -270,8 +319,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent-cyan/30 overflow-hidden flex flex-col lg:flex-row transition-colors duration-300">
       
-
-
       {/* Background Ambient Glows (Only visible in dark mode via opacity-0 in light) */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-0 dark:opacity-100 transition-opacity duration-700">
         <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-accent-cyan/10 blur-[120px]" />
@@ -293,10 +340,10 @@ export default function Home() {
             
             <div className="flex items-center gap-4 mb-4">
               <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-card ring-1 ring-card-border">
-                <Image src="/favicon.png" alt="RateLimit Logo" fill className="object-cover" />
+                <Image src="/logo.png" alt="LimitBench Logo" fill className="object-cover" />
               </div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                Rate Limiter
+                LimitBench
               </h1>
             </div>
             <p className="text-sm text-muted leading-relaxed">
@@ -310,12 +357,13 @@ export default function Home() {
               <h2 className="text-xs font-semibold uppercase tracking-widest text-muted mb-4 flex items-center gap-2">
                 <Activity size={14} /> Traffic Pattern
               </h2>
-              <div className="space-y-4 bg-card-bg rounded-2xl p-4 border border-card-border shadow-sm">
+              <div className="space-y-5 bg-card-bg rounded-2xl p-5 border border-card-border shadow-sm">
                 <div>
+                  <label className="block text-[10px] uppercase tracking-wider text-muted font-semibold mb-1.5">Pattern</label>
                   <select
                     value={request.pattern}
                     onChange={(e) => updateField("pattern", e.target.value as TrafficPattern)}
-                    className="w-full rounded-xl border border-card-border bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 appearance-none cursor-pointer"
+                    className="w-full rounded-xl border border-card-border bg-background px-4 py-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 appearance-none cursor-pointer hover:border-card-border/80 transition-colors"
                   >
                     {PATTERN_OPTIONS.map((opt) => (
                       <option key={opt.value} value={opt.value}>
@@ -325,30 +373,26 @@ export default function Home() {
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Duration (s)</label>
-                    <input type="number" min={1} max={60}
-                      value={request.duration_seconds}
-                      onChange={(e) => updateField("duration_seconds", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 transition-shadow"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Base Rate (req/s)</label>
-                    <input type="number" min={1} max={50}
-                      value={request.base_rate_per_second}
-                      onChange={(e) => updateField("base_rate_per_second", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 transition-shadow"
-                    />
-                  </div>
+                  <NumberInput 
+                    label="Duration (s)" 
+                    value={request.duration_seconds} 
+                    onChange={(v: number) => updateField("duration_seconds", v)} 
+                    min={1} max={60} 
+                  />
+                  <NumberInput 
+                    label="Base Rate (req/s)" 
+                    value={request.base_rate_per_second} 
+                    onChange={(v: number) => updateField("base_rate_per_second", v)} 
+                    min={1} max={50} 
+                  />
                 </div>
                 {request.pattern !== "steady" && (
                   <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Spike Multiplier</label>
-                    <input type="number" min={2} max={20}
-                      value={request.spike_multiplier}
-                      onChange={(e) => updateField("spike_multiplier", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 transition-shadow"
+                    <NumberInput 
+                      label="Spike Multiplier" 
+                      value={request.spike_multiplier} 
+                      onChange={(v: number) => updateField("spike_multiplier", v)} 
+                      min={2} max={20} 
                     />
                   </div>
                 )}
@@ -360,43 +404,35 @@ export default function Home() {
               <h2 className="text-xs font-semibold uppercase tracking-widest text-muted mb-4 flex items-center gap-2">
                 <Settings size={14} /> Algorithmic Limits
               </h2>
-              <div className="space-y-4 bg-card-bg rounded-2xl p-4 border border-card-border shadow-sm">
+              <div className="space-y-5 bg-card-bg rounded-2xl p-5 border border-card-border shadow-sm">
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Window Size (s)</label>
-                    <input type="number" min={0.1} max={10} step={0.1}
-                      value={request.window_size}
-                      onChange={(e) => updateField("window_size", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Limit (reqs)</label>
-                    <input type="number" min={1} max={100}
-                      value={request.limit}
-                      onChange={(e) => updateField("limit", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
-                    />
-                  </div>
+                  <NumberInput 
+                    label="Window Size (s)" 
+                    value={request.window_size} 
+                    onChange={(v: number) => updateField("window_size", v)} 
+                    min={0.1} max={60} step={0.1}
+                  />
+                  <NumberInput 
+                    label="Limit (reqs)" 
+                    value={request.limit} 
+                    onChange={(v: number) => updateField("limit", v)} 
+                    min={1} max={1000} 
+                  />
                 </div>
                 <div className="w-full h-px bg-card-border my-2" />
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Bucket Capacity</label>
-                    <input type="number" min={1} max={100}
-                      value={request.bucket_capacity}
-                      onChange={(e) => updateField("bucket_capacity", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] uppercase tracking-wider text-muted mb-1.5">Refill (tok/s)</label>
-                    <input type="number" min={1} max={100}
-                      value={request.bucket_refill_rate}
-                      onChange={(e) => updateField("bucket_refill_rate", Number(e.target.value))}
-                      className="w-full rounded-xl border border-card-border bg-background px-4 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent-cyan/50"
-                    />
-                  </div>
+                  <NumberInput 
+                    label="Bucket Capacity" 
+                    value={request.bucket_capacity} 
+                    onChange={(v: number) => updateField("bucket_capacity", v)} 
+                    min={1} max={1000} 
+                  />
+                  <NumberInput 
+                    label="Refill (tok/s)" 
+                    value={request.bucket_refill_rate} 
+                    onChange={(v: number) => updateField("bucket_refill_rate", v)} 
+                    min={1} max={1000} 
+                  />
                 </div>
               </div>
             </section>
@@ -586,7 +622,7 @@ export default function Home() {
                       API gateways rely on rate limiting to prevent abuse, manage resource allocation, and mitigate DDoS attacks. This environment simulates three industry-standard algorithms in real-time, visualizing their strictness and memory tradeoffs during traffic bursts.
                     </p>
                     
-                    <div className="flex items-center gap-6 text-sm text-muted font-medium">
+                    <div className="flex items-center gap-6 text-sm text-muted font-medium flex-wrap">
                       <span className="flex items-center gap-2">
                         <Container size={16} className="text-accent-cyan" /> Token Bucket
                       </span>
@@ -610,6 +646,30 @@ export default function Home() {
                   </div>
                 ) : response ? (
                   <div className="space-y-12">
+                    
+                    {/* Dynamic AI Summary */}
+                    <motion.section
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
+                    >
+                      <div className="bg-gradient-to-r from-accent-cyan/10 to-accent-violet/5 rounded-2xl p-6 md:p-8 border border-accent-cyan/20 relative overflow-hidden shadow-sm">
+                        <div className="flex gap-4">
+                          <div className="mt-1 flex-shrink-0">
+                            <Sparkles className="text-accent-cyan animate-pulse" size={24} />
+                          </div>
+                          <div>
+                            <h2 className="text-lg font-bold text-foreground mb-2 flex items-center gap-2">
+                              Executive Summary
+                            </h2>
+                            <p className="text-muted leading-relaxed">
+                              {generateExecutiveSummary(response)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.section>
+
                     {/* Summaries */}
                     <section>
                       <h2 className="text-sm font-semibold tracking-wide uppercase text-muted mb-6 flex items-center gap-2">

@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rate Limiter",
+  title: "LimitBench",
   description: "Advanced simulation environment for rate-limiting algorithms.",
 };
 

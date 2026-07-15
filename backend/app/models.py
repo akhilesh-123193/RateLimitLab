@@ -38,19 +38,22 @@ class SimulationRequest(BaseModel):
     duration_seconds: float = Field(
         default=10.0,
         gt=0,
-        description="Total duration of the simulation in seconds.",
+        le=60.0,
+        description="Total duration of the simulation in seconds. Max 60.",
     )
     base_rate_per_second: float = Field(
         default=3.0,
         gt=0,
-        description="Number of requests per second during steady periods.",
+        le=50.0,
+        description="Number of requests per second during steady periods. Max 50.",
     )
     spike_multiplier: float = Field(
         default=5.0,
         gt=1,
+        le=20.0,
         description=(
             "How many times the base rate to use during spike bursts. "
-            "Only relevant for 'spike' and 'double_spike' patterns."
+            "Only relevant for 'spike' and 'double_spike' patterns. Max 20."
         ),
     )
 
@@ -58,24 +61,28 @@ class SimulationRequest(BaseModel):
     limit: int = Field(
         default=5,
         gt=0,
-        description="Max allowed requests per window (sliding window algorithms).",
+        le=1000,
+        description="Max allowed requests per window (sliding window algorithms). Max 1000.",
     )
     window_size: float = Field(
         default=1.0,
         gt=0,
-        description="Window size in seconds (sliding window algorithms).",
+        le=60.0,
+        description="Window size in seconds (sliding window algorithms). Max 60.",
     )
 
     # Token bucket-specific configuration
     bucket_capacity: int = Field(
         default=5,
         gt=0,
-        description="Max tokens the token bucket can hold.",
+        le=1000,
+        description="Maximum tokens the bucket can hold. Max 1000.",
     )
     bucket_refill_rate: float = Field(
         default=5.0,
         gt=0,
-        description="Tokens added per second to the token bucket.",
+        le=1000.0,
+        description="Tokens added to the bucket per second. Max 1000.",
     )
 
 
