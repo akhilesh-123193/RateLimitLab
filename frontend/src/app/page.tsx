@@ -587,6 +587,16 @@ export default function Home() {
                       Configure your traffic parameters in the sidebar and run the simulation to see the architectural tradeoffs in action.
                     </p>
                   </div>
+                ) : loading && !response ? (
+                  <div className="flex flex-col items-center justify-center h-[50vh] text-center border border-white/5 border-dashed rounded-3xl bg-white/[0.01]">
+                    <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-[0_0_50px_rgba(34,211,238,0.1)]">
+                      <Loader2 size={32} className="text-cyan-400 animate-spin" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-white mb-2">Waking up Simulation Engine</h2>
+                    <p className="text-slate-400 max-w-sm">
+                      Please wait... The backend may take up to 30-40 seconds to spin up from a cold start on the free tier.
+                    </p>
+                  </div>
                 ) : response ? (
                   <div className="space-y-12">
                     
