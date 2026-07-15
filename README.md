@@ -4,7 +4,7 @@
 
 By running identical simulated traffic vectors through each algorithm simultaneously, this tool mathematically proves their tradeoffs regarding memory usage, strictness, and burst tolerance.
 
-![LimitBench UI](https://via.placeholder.com/1200x600.png?text=LimitBench+Dashboard) <!-- Replace with actual screenshot -->
+🚀 **[View the Live Demo on Vercel](https://rate-limit-lab.vercel.app/)**
 
 ## 🏗️ System Architecture
 
