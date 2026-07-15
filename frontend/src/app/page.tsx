@@ -338,14 +338,17 @@ export default function Home() {
               <ThemeToggle />
             </div>
             
-            <div className="flex items-center gap-4 mb-4">
+            <button 
+              onClick={() => { setResponse(null); setError(null); }}
+              className="flex items-center gap-4 mb-4 hover:opacity-80 transition-opacity text-left"
+            >
               <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-card ring-1 ring-card-border">
                 <Image src="/logo.png" alt="LimitBench Logo" fill className="object-cover" />
               </div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground">
                 LimitBench
               </h1>
-            </div>
+            </button>
             <p className="text-sm text-muted leading-relaxed">
               Professional-grade simulation environment for analyzing rate-limiting algorithms and traffic behavior in real-time.
             </p>
@@ -608,10 +611,6 @@ export default function Home() {
                   <div className="flex flex-col h-[50vh] justify-center p-8 md:p-12 rounded-3xl border border-card-border bg-gradient-to-br from-card-bg to-background relative overflow-hidden shadow-card">
                     <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
                       <Server size={200} className="text-foreground" />
-                    </div>
-                    
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/10 text-[11px] font-semibold tracking-wide uppercase text-accent-cyan w-fit mb-6">
-                      <Zap size={14} /> Production Grade
                     </div>
                     
                     <h2 className="text-3xl font-bold text-foreground mb-4">
