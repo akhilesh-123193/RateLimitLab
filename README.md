@@ -4,7 +4,7 @@
 
 By running identical simulated traffic vectors through each algorithm simultaneously, this tool mathematically proves their tradeoffs regarding memory usage, strictness, and burst tolerance.
 
-🚀 **[View the Live Demo on Vercel](https://rate-limit-lab.vercel.app/)**
+🌐 **[Access Interactive Sandbox](https://rate-limit-lab.vercel.app/)**
 
 ## 🏗️ System Architecture
 
