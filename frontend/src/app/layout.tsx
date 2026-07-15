@@ -16,9 +16,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Rate Limiter",
   description: "Advanced simulation environment for rate-limiting algorithms.",
-  icons: {
-    icon: "/favicon.png",
-  },
 };
 
 export default function RootLayout({

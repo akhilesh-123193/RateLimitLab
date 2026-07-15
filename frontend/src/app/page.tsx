@@ -246,7 +246,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"dashboard" | "theory">("dashboard");
-  const [showWelcome, setShowWelcome] = useState(true);
 
   const handleRun = useCallback(async () => {
     setLoading(true);
@@ -271,42 +270,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-accent-cyan/30 overflow-hidden flex flex-col lg:flex-row transition-colors duration-300">
       
-      {/* Welcome Modal for Recruiters/First-time visitors */}
-      <AnimatePresence>
-        {showWelcome && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="bg-card-bg border border-card-border rounded-3xl shadow-2xl p-8 md:p-12 max-w-2xl w-full"
-            >
-              <div className="flex justify-center mb-6">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden shadow-lg ring-1 ring-card-border relative">
-                  <Image src="/favicon.png" alt="Logo" fill className="object-cover" />
-                </div>
-              </div>
-              <h2 className="text-3xl font-bold text-center mb-4 text-foreground">Welcome to RateLimit</h2>
-              <p className="text-muted text-center text-lg mb-8 leading-relaxed">
-                Imagine a bouncer at a busy nightclub controlling how fast people can enter to prevent overcrowding. 
-                <br /><br />
-                This app is a visual simulation of the complex algorithms that tech giants use to be that "bouncer" for their servers. You can configure traffic spikes, test algorithmic constraints, and watch how different systems handle the load in real-time.
-              </p>
-              <button
-                onClick={() => setShowWelcome(false)}
-                className="w-full bg-foreground text-background py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
-              >
-                Enter Interactive Dashboard <Play size={18} fill="currentColor" />
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {/* Background Ambient Glows (Only visible in dark mode via opacity-0 in light) */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-0 dark:opacity-100 transition-opacity duration-700">
@@ -332,7 +296,7 @@ export default function Home() {
                 <Image src="/favicon.png" alt="RateLimit Logo" fill className="object-cover" />
               </div>
               <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                RateLimit
+                Rate Limiter
               </h1>
             </div>
             <p className="text-sm text-muted leading-relaxed">
@@ -605,14 +569,34 @@ export default function Home() {
                 exit={{ opacity: 0, y: -10 }}
               >
                 {!response && !loading && !error ? (
-                  <div className="flex flex-col items-center justify-center h-[50vh] text-center border border-card-border border-dashed rounded-3xl bg-card-bg/50">
-                    <div className="w-20 h-20 rounded-full bg-background flex items-center justify-center mb-6 ring-1 ring-card-border shadow-sm">
-                      <Activity size={32} className="text-muted" />
+                  <div className="flex flex-col h-[50vh] justify-center p-8 md:p-12 rounded-3xl border border-card-border bg-gradient-to-br from-card-bg to-background relative overflow-hidden shadow-card">
+                    <div className="absolute top-0 right-0 p-12 opacity-5 pointer-events-none">
+                      <Server size={200} className="text-foreground" />
                     </div>
-                    <h2 className="text-xl font-semibold text-foreground mb-2">Ready for Simulation</h2>
-                    <p className="text-muted max-w-sm">
-                      Configure your traffic parameters in the sidebar and run the simulation to see the architectural tradeoffs in action.
+                    
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-accent-cyan/20 bg-accent-cyan/10 text-[11px] font-semibold tracking-wide uppercase text-accent-cyan w-fit mb-6">
+                      <Zap size={14} /> Production Grade
+                    </div>
+                    
+                    <h2 className="text-3xl font-bold text-foreground mb-4">
+                      API Gateway & Rate Limiting Simulation
+                    </h2>
+                    
+                    <p className="text-muted text-lg max-w-2xl leading-relaxed mb-8">
+                      API gateways rely on rate limiting to prevent abuse, manage resource allocation, and mitigate DDoS attacks. This environment simulates three industry-standard algorithms in real-time, visualizing their strictness and memory tradeoffs during traffic bursts.
                     </p>
+                    
+                    <div className="flex items-center gap-6 text-sm text-muted font-medium">
+                      <span className="flex items-center gap-2">
+                        <Container size={16} className="text-accent-cyan" /> Token Bucket
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <BarChart2 size={16} className="text-accent-violet" /> SW Counter
+                      </span>
+                      <span className="flex items-center gap-2">
+                        <ScrollText size={16} className="text-accent-emerald" /> SW Log
+                      </span>
+                    </div>
                   </div>
                 ) : loading && !response ? (
                   <div className="flex flex-col items-center justify-center h-[50vh] text-center border border-card-border border-dashed rounded-3xl bg-card-bg/50">
