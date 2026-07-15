@@ -592,9 +592,10 @@ export default function Home() {
                     <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-[0_0_50px_rgba(34,211,238,0.1)]">
                       <Loader2 size={32} className="text-cyan-400 animate-spin" />
                     </div>
-                    <h2 className="text-xl font-semibold text-white mb-2">Waking up Simulation Engine</h2>
+                    <h2 className="text-xl font-semibold text-white mb-2">Simulating Traffic...</h2>
                     <p className="text-slate-400 max-w-sm">
-                      Please wait... The backend may take up to 30-40 seconds to spin up from a cold start on the free tier.
+                      Running algorithms and calculating results. 
+                      <br /><span className="text-xs opacity-70">(Note: The first request may take ~30s if the free tier server is asleep)</span>
                     </p>
                   </div>
                 ) : response ? (
