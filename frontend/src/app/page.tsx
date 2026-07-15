@@ -11,7 +11,6 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
 import {
@@ -29,7 +28,6 @@ import {
   Loader2,
   Sun,
   Moon,
-  Info,
   Sparkles,
 } from "lucide-react";
 import { runSimulation } from "@/lib/api";
