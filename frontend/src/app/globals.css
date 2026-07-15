@@ -1,16 +1,31 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0b1120;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  --accent-cyan: #0891b2;
+  --accent-violet: #7c3aed;
+  --accent-emerald: #059669;
+  --accent-amber: #d97706;
+  --accent-rose: #e11d48;
+  --muted: #64748b;
+}
+
+.dark {
+  --background: #060a13;
   --foreground: #e2e8f0;
-  --card-bg: #131c31;
-  --card-border: #1e2d4a;
+  --card-bg: rgba(255, 255, 255, 0.02);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
   --accent-cyan: #22d3ee;
   --accent-violet: #8b5cf6;
   --accent-emerald: #34d399;
   --accent-amber: #fbbf24;
   --accent-rose: #fb7185;
-  --muted: #64748b;
+  --muted: #94a3b8;
 }
 
 @theme inline {
@@ -18,6 +33,7 @@
   --color-foreground: var(--foreground);
   --color-card-bg: var(--card-bg);
   --color-card-border: var(--card-border);
+  --shadow-card: var(--card-shadow);
   --color-accent-cyan: var(--accent-cyan);
   --color-accent-violet: var(--accent-violet);
   --color-accent-emerald: var(--accent-emerald);
