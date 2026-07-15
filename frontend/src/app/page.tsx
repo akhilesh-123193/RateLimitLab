@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BarChart,
@@ -384,12 +385,16 @@ export default function Home() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
               Live Simulation
             </div>
-            <h1 className="text-3xl font-bold tracking-tight text-white mb-3">
-              Rate Limiter<br />
-              <span className="bg-gradient-to-r from-cyan-400 via-violet-400 to-emerald-400 bg-clip-text text-transparent">Comparison</span>
-            </h1>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="relative w-12 h-12 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.15)] ring-1 ring-white/10">
+                <Image src="/icon.png" alt="RateLimit Pro Logo" fill className="object-cover" />
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight text-white">
+                RateLimit<span className="font-light">Pro</span>
+              </h1>
+            </div>
             <p className="text-sm text-slate-400 leading-relaxed">
-              Configure traffic patterns and algorithmic constraints, then simulate identical requests through three limiters simultaneously.
+              Professional-grade simulation environment for analyzing rate-limiting algorithms and traffic behavior in real-time.
             </p>
           </header>
 
@@ -592,10 +597,9 @@ export default function Home() {
                     <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-[0_0_50px_rgba(34,211,238,0.1)]">
                       <Loader2 size={32} className="text-cyan-400 animate-spin" />
                     </div>
-                    <h2 className="text-xl font-semibold text-white mb-2">Simulating Traffic...</h2>
+                    <h2 className="text-xl font-semibold text-white mb-2">Analyzing Traffic Vectors...</h2>
                     <p className="text-slate-400 max-w-sm">
-                      Running algorithms and calculating results. 
-                      <br /><span className="text-xs opacity-70">(Note: The first request may take ~30s if the free tier server is asleep)</span>
+                      Initializing simulation environment and calculating algorithmic bounds in real-time.
                     </p>
                   </div>
                 ) : response ? (

@@ -13,9 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rate Limiter Comparison | Algorithm Visualizer",
-  description:
-    "Compare token bucket, sliding window counter, and sliding window log rate-limiting algorithms side by side with interactive simulations.",
+  title: "RateLimit Pro",
+  description: "Advanced simulation environment for rate-limiting algorithms.",
 };
 
 export default function RootLayout({
